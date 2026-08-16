@@ -42,7 +42,7 @@ export function useSpeechRecognition({
       const recognition = new SpeechRecognition();
       recognition.continuous = continuous;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = navigator.language || 'fr-FR';
 
       recognition.onstart = () => {
         setIsListening(true);

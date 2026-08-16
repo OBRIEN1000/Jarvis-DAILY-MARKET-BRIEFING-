@@ -3,17 +3,12 @@ import {
   ListFilter,
   Plus,
   Trash2,
-  TrendingUp,
-  TrendingDown,
   Volume2,
-  Sparkles,
   Search,
   Tag,
   Target,
   Shield,
   Edit2,
-  Check,
-  X,
 } from 'lucide-react';
 import { WatchlistItem } from '../types';
 
@@ -31,9 +26,7 @@ const PRESET_TICKERS = [
   { symbol: 'AAPL', name: 'Apple Inc', sentiment: 'Bullish', sentimentScore: 72 },
   { symbol: 'BTC-USD', name: 'Bitcoin', sentiment: 'Bullish', sentimentScore: 78 },
   { symbol: 'SPY', name: 'S&P 500 ETF', sentiment: 'Bullish', sentimentScore: 65 },
-  { symbol: 'QQQ', name: 'Invesco QQQ', sentiment: 'Bullish', sentimentScore: 70 },
   { symbol: 'PLTR', name: 'Palantir Tech', sentiment: 'Bullish', sentimentScore: 82 },
-  { symbol: 'AMD', name: 'Adv Micro Dev', sentiment: 'Neutral', sentimentScore: 54 },
 ];
 
 export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
@@ -66,7 +59,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       name: clean,
       sentiment: 'Neutral',
       sentimentScore: 50,
-      thesis: 'Monitoring for breakout or key technical support test.',
+      thesis: 'Active monitoring for breakout or support test.',
       catalysts: ['Upcoming earnings / macro print'],
       lastUpdated: new Date().toISOString(),
     };
@@ -110,35 +103,26 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
   return (
     <div
       id="trade-watchlist-module"
-      className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/30 transition-all p-5 backdrop-blur-md shadow-xl flex flex-col justify-between"
+      className="bg-black border border-yellow-500/30 p-4 flex flex-col justify-between"
     >
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
-            <ListFilter className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-100 font-mono">
-                PERSONALIZED TRADE WATCHLIST
-              </h2>
-              <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-teal-950/60 border border-teal-500/30 text-teal-300">
-                {watchlist.length} ASSETS
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Live sentiment, price targets, and instant voice scanner
-            </p>
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-yellow-500/20">
+        <div className="flex items-center gap-2 font-mono">
+          <ListFilter className="w-4 h-4 text-yellow-400" />
+          <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+            WATCHLIST
+          </h2>
+          <span className="px-1.5 py-0.2 text-[10px] font-mono bg-neutral-900 border border-neutral-800 text-yellow-400">
+            {watchlist.length}
+          </span>
         </div>
 
         <button
           onClick={() => setIsAdding(!isAdding)}
           id="btn-add-watchlist-ticker"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold transition-all cursor-pointer shadow-md shadow-cyan-500/20"
+          className="flex items-center gap-1 px-2.5 py-1 bg-yellow-400 hover:bg-yellow-300 text-black text-xs font-mono font-bold transition-colors cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           <span>ADD TICKER</span>
         </button>
       </div>
@@ -147,41 +131,39 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       {isAdding && (
         <form
           onSubmit={handleAddSubmit}
-          className="mt-3 p-3 rounded-xl bg-slate-950/80 border border-cyan-500/30 flex flex-col sm:flex-row items-center gap-2"
+          className="mt-2 p-2 bg-neutral-950 border border-yellow-500/30 flex items-center gap-2"
         >
-          <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <div className="relative flex-1">
+            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 top-2" />
             <input
               type="text"
               value={newSymbol}
               onChange={(e) => setNewSymbol(e.target.value)}
-              placeholder="e.g. NVDA, TSLA, BTC-USD, SPY, ETH-USD..."
+              placeholder="e.g. NVDA, TSLA, BTC-USD..."
               autoFocus
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+              className="w-full pl-8 pr-2 py-1 bg-black border border-neutral-800 text-xs font-mono text-white placeholder-neutral-600 focus:outline-none focus:border-yellow-400"
             />
           </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="submit"
-              id="btn-confirm-add-ticker"
-              className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold"
-            >
-              ADD
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsAdding(false)}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono"
-            >
-              CANCEL
-            </button>
-          </div>
+          <button
+            type="submit"
+            id="btn-confirm-add-ticker"
+            className="px-3 py-1 bg-yellow-400 text-black text-xs font-mono font-bold hover:bg-yellow-300"
+          >
+            ADD
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsAdding(false)}
+            className="px-2 py-1 bg-neutral-900 text-neutral-400 text-xs font-mono hover:text-white"
+          >
+            ✕
+          </button>
         </form>
       )}
 
       {/* Quick Add Presets Bar */}
-      <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none text-xs">
-        <span className="text-[11px] text-slate-500 font-mono shrink-0">Presets:</span>
+      <div className="mt-2 flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none text-xs font-mono">
+        <span className="text-[10px] text-neutral-500 shrink-0 uppercase">Presets:</span>
         {PRESET_TICKERS.map((preset) => {
           const isAdded = watchlist.some((w) => w.symbol === preset.symbol);
           return (
@@ -190,10 +172,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
               onClick={() => handleQuickAdd(preset)}
               disabled={isAdded}
               id={`preset-ticker-${preset.symbol.replace(/[^a-zA-Z0-9]/g, '')}`}
-              className={`px-2 py-0.5 rounded-lg text-xs font-mono border transition-all shrink-0 ${
+              className={`px-1.5 py-0.5 text-xs border transition-colors shrink-0 ${
                 isAdded
-                  ? 'bg-slate-900 border-slate-800 text-slate-600 cursor-default'
-                  : 'bg-slate-800/60 hover:bg-cyan-950/60 border-slate-700 hover:border-cyan-500/30 text-slate-300 hover:text-cyan-300'
+                  ? 'bg-neutral-950 border-neutral-900 text-neutral-600 cursor-default'
+                  : 'bg-neutral-900 hover:bg-yellow-400 hover:text-black border-neutral-800 text-neutral-300'
               }`}
             >
               +{preset.symbol}
@@ -203,117 +185,112 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       </div>
 
       {/* Watchlist Grid */}
-      <div className="mt-3 space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
+      <div className="mt-2 space-y-2 max-h-[380px] overflow-y-auto pr-1">
         {watchlist.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-500 font-mono border border-dashed border-slate-800 rounded-xl">
-            No active tickers in your watchlist. Add symbols to receive tailored morning updates.
+          <div className="py-6 text-center text-xs text-neutral-500 font-mono border border-dashed border-neutral-900">
+            No active tickers in watchlist.
           </div>
         ) : (
           watchlist.map((item) => (
             <div
               key={item.symbol}
               id={`watchlist-card-${item.symbol.replace(/[^a-zA-Z0-9]/g, '')}`}
-              className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-cyan-500/30 transition-all text-xs space-y-2 group"
+              className="p-2.5 bg-neutral-950 border border-neutral-900 hover:border-yellow-500/30 transition-colors text-xs space-y-1.5"
             >
-              {/* Top Row: Symbol, Name, Sentiment, Quick Voice Action, Remove */}
+              {/* Row: Symbol, Sentiment, Scan, Delete */}
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-sm text-slate-100 group-hover:text-cyan-300 transition-colors">
+                  <span className="font-mono font-bold text-white text-xs">
                     {item.symbol}
                   </span>
-                  <span className="text-slate-400 font-sans text-xs hidden sm:inline">
-                    {item.name !== item.symbol ? item.name : ''}
-                  </span>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    className={`text-[10px] font-mono font-bold px-1.5 py-0.2 ${
                       item.sentiment === 'Bullish'
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/30'
+                        ? 'text-yellow-400 bg-yellow-950/40 border border-yellow-500/30'
                         : item.sentiment === 'Bearish'
-                        ? 'bg-rose-950 text-rose-300 border border-rose-500/30'
-                        : item.sentiment === 'Volatile'
-                        ? 'bg-purple-950 text-purple-300 border border-purple-500/30'
-                        : 'bg-amber-950 text-amber-300 border border-amber-500/30'
+                        ? 'text-red-400 bg-red-950/40 border border-red-500/30'
+                        : 'text-neutral-400 bg-neutral-900 border border-neutral-800'
                     }`}
                   >
-                    {item.sentiment} ({item.sentimentScore}/100)
+                    {item.sentiment} ({item.sentimentScore})
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => onAskJarvisForTicker(item.symbol)}
                     id={`btn-voice-scan-${item.symbol.replace(/[^a-zA-Z0-9]/g, '')}`}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-mono font-semibold transition-all cursor-pointer"
-                    title={`Ask Jarvis to analyze ${item.symbol}`}
+                    className="flex items-center gap-1 px-2 py-0.5 bg-neutral-900 hover:bg-yellow-400 hover:text-black text-yellow-400 border border-yellow-500/30 text-[11px] font-mono font-semibold transition-colors cursor-pointer"
+                    title={`Scan ${item.symbol}`}
                   >
                     <Volume2 className="w-3 h-3" />
-                    <span>JARVIS SCAN</span>
+                    <span>SCAN</span>
                   </button>
 
                   <button
                     onClick={() => (editingSymbol === item.symbol ? setEditingSymbol(null) : startEdit(item))}
-                    className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
-                    title="Edit trade thesis and target levels"
+                    className="p-1 text-neutral-500 hover:text-neutral-200 transition-colors"
+                    title="Edit levels"
                   >
-                    <Edit2 className="w-3.5 h-3.5" />
+                    <Edit2 className="w-3 h-3" />
                   </button>
 
                   <button
                     onClick={() => onRemoveTicker(item.symbol)}
                     id={`btn-remove-${item.symbol.replace(/[^a-zA-Z0-9]/g, '')}`}
-                    className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-all"
-                    title="Remove from watchlist"
+                    className="p-1 text-neutral-500 hover:text-red-400 transition-colors"
+                    title="Remove"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
               {/* Editing Mode */}
               {editingSymbol === item.symbol ? (
-                <div className="pt-2 border-t border-slate-800 space-y-2 bg-slate-900/60 p-2.5 rounded-lg">
-                  <div className="grid grid-cols-2 gap-2 font-mono">
+                <div className="pt-2 border-t border-neutral-800 space-y-2 bg-black p-2 font-mono text-xs">
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-slate-400 block mb-0.5">Target Price ($)</label>
+                      <label className="text-[10px] text-neutral-400 block">Target ($)</label>
                       <input
                         type="number"
                         value={editTarget}
                         onChange={(e) => setEditTarget(e.target.value)}
-                        placeholder="e.g. 150.00"
-                        className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-slate-200 text-xs"
+                        placeholder="150.00"
+                        className="w-full px-2 py-0.5 bg-neutral-950 border border-neutral-800 text-white text-xs"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-slate-400 block mb-0.5">Stop Loss ($)</label>
+                      <label className="text-[10px] text-neutral-400 block">Stop ($)</label>
                       <input
                         type="number"
                         value={editStop}
                         onChange={(e) => setEditStop(e.target.value)}
-                        placeholder="e.g. 132.00"
-                        className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-slate-200 text-xs"
+                        placeholder="132.00"
+                        className="w-full px-2 py-0.5 bg-neutral-950 border border-neutral-800 text-white text-xs"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-400 block mb-0.5 font-mono">Trade Thesis / Catalyst</label>
+                    <label className="text-[10px] text-neutral-400 block">Thesis</label>
                     <input
                       type="text"
                       value={editThesis}
                       onChange={(e) => setEditThesis(e.target.value)}
-                      placeholder="e.g. Breakout above 50-day moving average"
-                      className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-slate-200 text-xs font-mono"
+                      placeholder="Breakout monitoring"
+                      className="w-full px-2 py-0.5 bg-neutral-950 border border-neutral-800 text-white text-xs"
                     />
                   </div>
-                  <div className="flex justify-end gap-2 pt-1">
+                  <div className="flex justify-end gap-1 pt-1">
                     <button
                       onClick={() => setEditingSymbol(null)}
-                      className="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono"
+                      className="px-2 py-0.5 bg-neutral-900 text-neutral-400 text-xs"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => saveEdit(item)}
-                      className="px-2.5 py-1 rounded bg-teal-500 text-slate-950 text-xs font-mono font-bold"
+                      className="px-2.5 py-0.5 bg-yellow-400 text-black text-xs font-bold"
                     >
                       Save
                     </button>
@@ -323,26 +300,26 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 /* Static view */
                 <div className="space-y-1">
                   {item.thesis && (
-                    <p className="text-slate-300 font-sans text-xs">
+                    <p className="text-neutral-300 font-sans text-xs">
                       {item.thesis}
                     </p>
                   )}
-                  <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-400 pt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-[10px] font-mono text-neutral-400 pt-0.5">
                     {item.targetPrice && (
-                      <span className="flex items-center gap-1 text-emerald-400">
+                      <span className="flex items-center gap-1 text-yellow-400">
                         <Target className="w-3 h-3" />
                         Target: ${item.targetPrice}
                       </span>
                     )}
                     {item.stopLoss && (
-                      <span className="flex items-center gap-1 text-rose-400">
+                      <span className="flex items-center gap-1 text-red-400">
                         <Shield className="w-3 h-3" />
                         Stop: ${item.stopLoss}
                       </span>
                     )}
                     {item.catalysts && item.catalysts.length > 0 && (
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Tag className="w-3 h-3 text-cyan-400" />
+                      <span className="flex items-center gap-1 text-neutral-400">
+                        <Tag className="w-3 h-3 text-yellow-400/80" />
                         {item.catalysts[0]}
                       </span>
                     )}

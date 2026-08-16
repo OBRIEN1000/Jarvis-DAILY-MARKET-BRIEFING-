@@ -31,21 +31,16 @@ const modelCooldowns = new Map<string, number>();
 // Helper: Sleep for exponential backoff
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Lazy initialization of Gemini Client
-let aiClient: GoogleGenAI | null = null;
+// Get fresh Gemini Client with all key variants
 function getGeminiClient(): GoogleGenAI {
-  if (!aiClient) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    aiClient = new GoogleGenAI({
-      apiKey: apiKey || '',
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        },
-      },
-    });
-  }
-  return aiClient;
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.GEMINI_API ||
+    process.env.GEMINI_APIKEY ||
+    process.env.API_KEY ||
+    '';
+
+  return new GoogleGenAI(apiKey ? { apiKey: apiKey.trim() } : {});
 }
 
 // Resilient Gemini Execution with Model Cooldowns, Tool Fallback & Cascade
@@ -58,8 +53,8 @@ async function executeGeminiWithRetry(
     responseMimeType?: string;
     temperature?: number;
   },
-  primaryModel: string = 'gemini-3.7-flash',
-  fallbackModel: string = 'gemini-flash-latest'
+  primaryModel: string = 'gemini-2.5-flash',
+  fallbackModel: string = 'gemini-2.5-flash-lite'
 ) {
   const ai = getGeminiClient();
   const configsToTry = [
@@ -68,13 +63,9 @@ async function executeGeminiWithRetry(
     { model: fallbackModel, withTools: false },
   ];
 
-  for (const cfg of configsToTry) {
-    const cooldownKey = `${cfg.model}:${cfg.withTools}`;
-    const cooldownUntil = modelCooldowns.get(cooldownKey) || 0;
-    if (Date.now() < cooldownUntil) {
-      continue;
-    }
+  let lastError: any = null;
 
+  for (const cfg of configsToTry) {
     try {
       const contents = params.contents || params.prompt;
       const config: any = {
@@ -101,31 +92,13 @@ async function executeGeminiWithRetry(
         return response;
       }
     } catch (err: any) {
+      lastError = err;
       const errorMessage = String(err?.message || err || '');
-      const isRateOrCapacityLimit =
-        errorMessage.includes('429') ||
-        errorMessage.includes('503') ||
-        errorMessage.includes('UNAVAILABLE') ||
-        errorMessage.includes('RESOURCE_EXHAUSTED') ||
-        errorMessage.includes('high demand') ||
-        errorMessage.includes('quota') ||
-        errorMessage.includes('rate limit') ||
-        errorMessage.includes('overloaded');
-
-      if (isRateOrCapacityLimit) {
-        // Cooldown this model/tool config for 45 seconds during high demand or quota limits
-        modelCooldowns.set(cooldownKey, Date.now() + 45 * 1000);
-        continue;
-      }
-
-      // Only log truly unexpected non-transient errors
-      if (!errorMessage.includes('404') && !errorMessage.includes('400')) {
-        console.warn(`Gemini execution [${cfg.model}] transient issue, cascading:`, errorMessage.slice(0, 120));
-      }
+      console.warn(`[Gemini API Error] model=${cfg.model} withTools=${cfg.withTools}:`, errorMessage);
     }
   }
 
-  throw new Error('All Gemini models currently on quota cooldown or unavailable');
+  throw lastError || new Error('Gemini execution failed');
 }
 
 // Health check
@@ -740,9 +713,26 @@ Tactical trade parameters indicate: Primary profit target at $${profile.target1.
     };
   }
 
-  // 6. Default Dynamic Market Intelligence Scan
+  // 6. Default Dynamic Conversational Intelligence Scan
+  const lowerTrim = lower.trim();
+  if (lowerTrim === 'hello' || lowerTrim === 'hi' || lowerTrim === 'bonjour' || lowerTrim === 'salut' || lowerTrim.includes('jarvis')) {
+    return {
+      text: `Bonjour ! JARVIS à votre service. Tous les flux de marché et les indicateurs sont en ligne. Que souhaitez-vous analyser aujourd'hui ? Vous pouvez me demander l'analyse d'une action (NVDA, TSLA, BTC...), le sentiment global ou le briefing du jour.`,
+      sources: [
+        { title: 'Google Finance Market Monitor', uri: 'https://finance.google.com' },
+      ],
+    };
+  }
+
+  if (lowerTrim.includes('shut') || lowerTrim.includes('tais') || lowerTrim.includes('stop') || lowerTrim.includes('silence')) {
+    return {
+      text: `Compris, je passe en mode veille silencieuse. Dites un mot ou écrivez votre directive quand vous serez prêt.`,
+      sources: [],
+    };
+  }
+
   return {
-    text: `Sir, all JARVIS quantitative feeds are active. I have performed a real-time sweep across global equities, Treasury yields, and crypto liquidity. Mega-cap tech momentum is currently leading the tape, supported by stable macro volatility (VIX 14.6). Specify any ticker symbol—such as NVDA, TSLA, PLTR, or BTC—for an instant technical and catalyst deep dive.`,
+    text: `Bien reçu, Sir. Les systèmes d'analyse quantitative scannent actuellement les marchés. Posez-moi une question sur n'importe quel ticker, actif crypto ou tendance macro pour obtenir un rapport détaillé.`,
     sources: [
       { title: 'Google Finance Market Monitor', uri: 'https://finance.google.com' },
     ],
@@ -777,11 +767,12 @@ Current local date and time: ${new Date().toISOString()}.
 ${watchlistStr}
 
 GUIDELINES FOR VOICE RESPONSES:
+- If the user speaks or writes in French, answer in French with JARVIS elegance. If the user speaks in English, answer in English.
 - Keep verbal replies concise, punchy, and conversational (1 to 3 crisp paragraphs), optimized for Text-to-Speech audio playback.
-- Address the user respectfully as "Sir" or "Trader" in characteristic JARVIS style.
+- Address the user respectfully ("Sir", "Monsieur", or "Trader") in characteristic JARVIS style.
 - When asked for price, sentiment, or news on a ticker, provide current market context, key catalysts, and clear Bullish/Bearish/Neutral sentiment.
-- Use Google Search grounding when available to retrieve current financial news, stock quotes, crypto movements, Fed commentary, and earnings reports.
-- Avoid markdown formatting that sounds awkward when read aloud (e.g. avoid complex nested bullet tables in the audio text, but highlight numbers clearly).`;
+- Use Google Search grounding to retrieve current financial news, stock quotes, crypto movements, Fed commentary, and earnings reports.
+- Avoid markdown formatting that sounds awkward when read aloud.`;
 
     // Construct conversation history for context
     const formattedContents: any[] = [];
@@ -810,8 +801,8 @@ GUIDELINES FOR VOICE RESPONSES:
           tools: [{ googleSearch: {} }],
           temperature: 0.7,
         },
-        'gemini-3.7-flash',
-        'gemini-flash-latest'
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-lite'
       );
 
       replyText = response.text || "Market feed received, Sir. Standing by for your next directive.";
@@ -1006,8 +997,8 @@ Return ONLY a valid JSON object in this exact format:
           responseMimeType: 'application/json',
           temperature: 0.4,
         },
-        'gemini-3.7-flash',
-        'gemini-flash-latest'
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-lite'
       );
 
       const rawText = response.text || '{}';
@@ -1145,8 +1136,8 @@ Return ONLY a valid JSON object matching this structure:
           responseMimeType: 'application/json',
           temperature: 0.3,
         },
-        'gemini-3.7-flash',
-        'gemini-flash-latest'
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-lite'
       );
 
       sentimentData = JSON.parse(response.text || '{}');
@@ -1224,8 +1215,8 @@ Return ONLY a valid JSON:
           responseMimeType: 'application/json',
           temperature: 0.3,
         },
-        'gemini-3.7-flash',
-        'gemini-flash-latest'
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-lite'
       );
 
       tickerData = JSON.parse(response.text || '{}');

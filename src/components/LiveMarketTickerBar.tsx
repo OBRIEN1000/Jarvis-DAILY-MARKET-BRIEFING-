@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Clock, Activity, Radio } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock } from 'lucide-react';
 
 interface TickerQuote {
   symbol: string;
@@ -25,7 +25,6 @@ interface LiveMarketTickerBarProps {
 
 export const LiveMarketTickerBar: React.FC<LiveMarketTickerBarProps> = ({ onSelectTicker }) => {
   const [time, setTime] = useState<string>('');
-  const [marketStatus, setMarketStatus] = useState<string>('MARKET ACTIVE');
 
   useEffect(() => {
     const updateTime = () => {
@@ -49,47 +48,38 @@ export const LiveMarketTickerBar: React.FC<LiveMarketTickerBarProps> = ({ onSele
   return (
     <header
       id="market-ticker-bar"
-      className="w-full bg-slate-950/90 border-b border-cyan-500/20 backdrop-blur-md px-3 py-2 flex flex-wrap items-center justify-between text-xs text-slate-300 select-none z-30"
+      className="w-full bg-black border-b border-yellow-500/20 px-4 py-2 flex flex-wrap items-center justify-between text-xs text-neutral-300 select-none z-30 font-mono"
     >
-      {/* Left: JARVIS System Status & Market Clock */}
+      {/* Left: Market Clock */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1.5 font-mono">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-          </span>
-          <span className="font-semibold text-cyan-400 tracking-wider">JARVIS // TRADING CORE</span>
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 bg-yellow-400 animate-pulse" />
+          <span className="font-bold text-yellow-400 tracking-wider">JARVIS // TERMINAL</span>
         </div>
 
-        <div className="hidden sm:flex items-center gap-1.5 text-slate-400 font-mono">
-          <Clock className="w-3.5 h-3.5 text-cyan-400/70" />
-          <span>NYC:</span>
-          <span className="text-slate-200 font-bold">{time || '09:30:00'} EST</span>
-        </div>
-
-        <div className="hidden md:flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300">
-          <Activity className="w-3 h-3 text-cyan-400" />
-          <span>GOOGLE FINANCE FEED</span>
+        <div className="hidden sm:flex items-center gap-1 text-neutral-400">
+          <Clock className="w-3.5 h-3.5 text-yellow-400/80" />
+          <span>EST:</span>
+          <span className="text-white font-bold">{time || '09:30:00'}</span>
         </div>
       </div>
 
-      {/* Center/Right: Live Tickers Strip */}
-      <div className="flex items-center gap-3 overflow-x-auto py-1 scrollbar-none font-mono">
+      {/* Right: Live Tickers Strip */}
+      <div className="flex items-center gap-2 overflow-x-auto py-0.5 scrollbar-none">
         {DEFAULT_TICKERS.map((t) => (
           <button
             key={t.symbol}
             onClick={() => onSelectTicker && onSelectTicker(t.symbol)}
             id={`ticker-item-${t.symbol.replace(/[^a-zA-Z0-9]/g, '')}`}
-            className="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-cyan-950/40 border border-transparent hover:border-cyan-500/30 transition-all text-left cursor-pointer group"
-            title={`Ask Jarvis for live analysis on ${t.symbol}`}
+            className="flex items-center gap-1.5 px-2 py-0.5 bg-neutral-950 hover:bg-yellow-400 hover:text-black border border-neutral-900 hover:border-yellow-400 transition-colors text-left cursor-pointer group"
           >
-            <span className="font-semibold text-slate-200 group-hover:text-cyan-300">
+            <span className="font-bold text-neutral-200 group-hover:text-black">
               {t.symbol}
             </span>
-            <span className="text-slate-400">{t.price}</span>
+            <span className="text-neutral-400 group-hover:text-black">{t.price}</span>
             <span
               className={`flex items-center text-[10px] font-bold ${
-                t.isPositive ? 'text-emerald-400' : 'text-rose-400'
+                t.isPositive ? 'text-emerald-400 group-hover:text-black' : 'text-red-400 group-hover:text-black'
               }`}
             >
               {t.isPositive ? (

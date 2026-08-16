@@ -1,18 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Sparkles,
-  Zap,
-  Radio,
-  Sliders,
-  Volume2,
-  RefreshCw,
-  Sun,
-  Shield,
-  Bot,
-  Activity,
-  AlertCircle,
-} from 'lucide-react';
-import {
   VoiceStatus,
   WatchlistItem,
   MarketSentimentData,
@@ -42,7 +29,7 @@ const DEFAULT_WATCHLIST: WatchlistItem[] = [
     sentimentScore: 86,
     targetPrice: 155.0,
     stopLoss: 128.0,
-    thesis: 'Data center AI accelerator demand remains strong; monitoring key breakout.',
+    thesis: 'Data center accelerator demand remains strong; monitoring key breakout.',
     catalysts: ['Upcoming earnings release', 'Blackwell GPU supply ramp'],
     lastUpdated: new Date().toISOString(),
   },
@@ -131,7 +118,7 @@ export default function App() {
       {
         id: 'init-1',
         sender: 'jarvis',
-        text: "Good morning, Sir. JARVIS trading core online and calibrated to Google Finance feeds. All voice neural channels are open. Speak your market directive or click any preset to begin.",
+        text: "Good morning, Sir. All voice telemetry channels are active. Speak your market directive or click any preset to begin.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
@@ -176,7 +163,6 @@ export default function App() {
       setVoiceStatus('speaking');
 
       try {
-        // Try Gemini TTS server endpoint first
         const res = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -269,7 +255,6 @@ export default function App() {
         setMessages((prev) => [...prev, jarvisMsg]);
         setIsChatProcessing(false);
 
-        // Speak aloud if enabled
         if (preferences.autoSpeakResponses) {
           speakText(replyText);
         } else {
@@ -296,7 +281,6 @@ export default function App() {
     isListening,
     interimTranscript,
     startListening,
-    stopListening,
     toggleListening,
   } = useSpeechRecognition({
     continuous: preferences.continuousListening,
@@ -353,7 +337,7 @@ export default function App() {
     }
   }, []);
 
-  // Initial Load: Staggered fetch to prevent concurrent burst spikes
+  // Initial Load: Staggered fetch
   useEffect(() => {
     let timer: NodeJS.Timeout;
     const initData = async () => {
@@ -417,13 +401,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans selection:bg-yellow-400 selection:text-black">
       {/* Top Live Ticker Strip */}
       <LiveMarketTickerBar onSelectTicker={handleAskJarvisForTicker} />
 
       {/* Main Container */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-5 space-y-6">
-        {/* Top Hero: JARVIS Holographic Voice HUD */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-4">
+        {/* Top: 3D Wave Voice HUD */}
         <JarvisVoiceHUD
           status={voiceStatus}
           isListening={isListening}
@@ -442,11 +426,10 @@ export default function App() {
           }
         />
 
-        {/* 2-Column Grid: Left (Morning Briefing & Sentiment), Right (Watchlist & Live Transcript) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Morning Trader Briefing & Market Sentiment */}
-          <div className="lg:col-span-7 space-y-6 flex flex-col">
-            {/* Morning Trader Intelligence Card */}
+        {/* 2-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* Left Column: Morning Briefing & Sentiment */}
+          <div className="lg:col-span-7 space-y-4 flex flex-col">
             <MorningBriefingCard
               briefing={morningBriefing}
               isLoading={isBriefingLoading}
@@ -455,7 +438,6 @@ export default function App() {
               onRefreshBriefing={fetchMorningBriefing}
             />
 
-            {/* Real-time Market Sentiment & Fear/Greed */}
             <MarketSentimentGauge
               sentiment={marketSentiment}
               isLoading={isSentimentLoading}
@@ -464,9 +446,8 @@ export default function App() {
             />
           </div>
 
-          {/* Right Column: Personalized Watchlist & Voice Transcript Log */}
-          <div className="lg:col-span-5 space-y-6 flex flex-col">
-            {/* Personalized Trade Watchlist */}
+          {/* Right Column: Watchlist & Chat */}
+          <div className="lg:col-span-5 space-y-4 flex flex-col">
             <WatchlistManager
               watchlist={watchlist}
               onAddTicker={handleAddTicker}
@@ -475,7 +456,6 @@ export default function App() {
               onAskJarvisForTicker={handleAskJarvisForTicker}
             />
 
-            {/* Voice Chat Transcript Log */}
             <VoiceChatLog
               messages={messages}
               isProcessing={isChatProcessing}
@@ -486,17 +466,6 @@ export default function App() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 px-4 py-3 text-center text-xs font-mono text-slate-500 flex flex-wrap items-center justify-between gap-2 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-          <span>JARVIS // VOICE AI TRADER ENGINE</span>
-        </div>
-        <div className="text-[11px] text-slate-500">
-          Powered by Gemini 3.7 Flash, Google Search Grounding & Real-time TTS
-        </div>
-      </footer>
 
       {/* Settings Modal */}
       <JarvisSettingsModal

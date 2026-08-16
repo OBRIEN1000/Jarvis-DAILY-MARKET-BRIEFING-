@@ -3,12 +3,7 @@ import {
   X,
   Sliders,
   Volume2,
-  Mic,
-  Clock,
-  Shield,
-  Sparkles,
   Bot,
-  Radio,
 } from 'lucide-react';
 import { JarvisPreferences, JarvisVoiceTone } from '../types';
 
@@ -28,7 +23,7 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
   if (!isOpen) return null;
 
   const voices: Array<{ name: JarvisPreferences['voiceName']; description: string }> = [
-    { name: 'Puck', description: 'Crisp British AI assistant (Default JARVIS)' },
+    { name: 'Puck', description: 'Crisp British AI assistant (Default)' },
     { name: 'Fenrir', description: 'Authoritative, deep institutional delivery' },
     { name: 'Zephyr', description: 'Fast-paced, modern tactical cadence' },
     { name: 'Charon', description: 'Resonant, calm risk-management tone' },
@@ -38,60 +33,53 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
   const tones: Array<{ id: JarvisVoiceTone; title: string; desc: string }> = [
     {
       id: 'jarvis',
-      title: 'Classic JARVIS',
-      desc: 'Polite British intelligence assistant, concise market briefings, "Good morning, Sir"',
+      title: 'JARVIS Protocol',
+      desc: 'Polite British intelligence, concise briefings',
     },
     {
       id: 'tactical',
       title: 'Quantitative Trader',
-      desc: 'Rapid support/resistance breakouts, risk-reward ratios, volatility stops',
+      desc: 'Breakouts, risk-reward ratios, volatility stops',
     },
     {
       id: 'institutional',
       title: 'Chief Investment Officer',
-      desc: 'Macro liquidity cycles, Treasury yield impacts, institutional capital flows',
+      desc: 'Macro liquidity cycles, Treasury yield impacts',
     },
     {
       id: 'cryptotrader',
       title: 'Crypto Alpha',
-      desc: 'On-chain flows, ETF momentum, funding rates, high-beta token volatility',
+      desc: 'On-chain flows, ETF momentum, token volatility',
     },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div
         id="jarvis-settings-modal"
-        className="w-full max-w-lg rounded-2xl bg-slate-900 border border-cyan-500/40 p-6 shadow-2xl space-y-5 text-slate-200"
+        className="w-full max-w-lg bg-black border border-yellow-500/50 p-5 space-y-4 text-white shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
-              <Sliders className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-mono font-bold text-base text-slate-100">
-                JARVIS VOICE & AI CONFIGURATION
-              </h3>
-              <p className="text-xs text-slate-400">
-                Audio neural engine, personality tones, and voice loop
-              </p>
-            </div>
+        <div className="flex items-center justify-between pb-3 border-b border-yellow-500/20">
+          <div className="flex items-center gap-2 font-mono">
+            <Sliders className="w-4 h-4 text-yellow-400" />
+            <h3 className="font-bold text-sm text-white uppercase tracking-wider">
+              VOICE PARAMETERS
+            </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
+            className="p-1 text-neutral-400 hover:text-white transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* 1. Voice Model Selector */}
         <div className="space-y-2">
-          <label className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5">
+          <label className="text-xs font-mono font-bold text-yellow-400 flex items-center gap-1.5 uppercase">
             <Volume2 className="w-3.5 h-3.5" />
-            GEMINI VOICE PROFILE (TTS)
+            Voice Profile
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {voices.map((v) => (
@@ -99,24 +87,24 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
                 key={v.name}
                 type="button"
                 onClick={() => onSavePreferences({ ...preferences, voiceName: v.name })}
-                className={`p-2.5 rounded-xl text-left border text-xs transition-all ${
+                className={`p-2 text-left border text-xs transition-all ${
                   preferences.voiceName === v.name
-                    ? 'bg-cyan-950/80 border-cyan-500 text-cyan-200 shadow-sm shadow-cyan-500/20'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-yellow-400 text-black border-yellow-400 font-bold'
+                    : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:border-neutral-700'
                 }`}
               >
-                <div className="font-mono font-bold text-slate-200">{v.name}</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">{v.description}</div>
+                <div className="font-mono">{v.name}</div>
+                <div className="text-[10px] opacity-80 mt-0.5">{v.description}</div>
               </button>
             ))}
           </div>
         </div>
 
-        {/* 2. Trading Personality Tone */}
+        {/* 2. Persona Tone */}
         <div className="space-y-2">
-          <label className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5">
+          <label className="text-xs font-mono font-bold text-yellow-400 flex items-center gap-1.5 uppercase">
             <Bot className="w-3.5 h-3.5" />
-            JARVIS PERSONA & ANALYTIC TONE
+            Persona Tone
           </label>
           <div className="space-y-1.5">
             {tones.map((t) => (
@@ -124,28 +112,28 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
                 key={t.id}
                 type="button"
                 onClick={() => onSavePreferences({ ...preferences, tone: t.id })}
-                className={`w-full p-2.5 rounded-xl text-left border text-xs transition-all ${
+                className={`w-full p-2 text-left border text-xs transition-all ${
                   preferences.tone === t.id
-                    ? 'bg-cyan-950/80 border-cyan-500 text-cyan-200 shadow-sm shadow-cyan-500/20'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-yellow-400 text-black border-yellow-400 font-bold'
+                    : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:border-neutral-700'
                 }`}
               >
-                <div className="font-mono font-bold text-slate-200">{t.title}</div>
-                <div className="text-[11px] text-slate-400">{t.desc}</div>
+                <div className="font-mono">{t.title}</div>
+                <div className="text-[10px] opacity-80">{t.desc}</div>
               </button>
             ))}
           </div>
         </div>
 
-        {/* 3. Toggles: Continuous Voice & Auto-Speak */}
-        <div className="space-y-2 pt-2 border-t border-slate-800">
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
+        {/* 3. Toggles */}
+        <div className="space-y-2 pt-2 border-t border-yellow-500/20">
+          <div className="flex items-center justify-between p-2 bg-neutral-950 border border-neutral-800 text-xs">
             <div>
-              <span className="font-mono font-bold text-slate-200 block">
-                Continuous Always-On Voice Mode
+              <span className="font-mono font-bold text-neutral-200 block">
+                Continuous Voice Mode
               </span>
-              <span className="text-[11px] text-slate-400">
-                Keeps microphone actively listening for hands-free trader dialogue
+              <span className="text-[10px] text-neutral-500">
+                Keeps microphone actively listening
               </span>
             </div>
             <button
@@ -155,25 +143,23 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
                   continuousListening: !preferences.continuousListening,
                 })
               }
-              className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                preferences.continuousListening ? 'bg-cyan-500' : 'bg-slate-700'
+              className={`px-3 py-1 font-mono text-xs font-bold border transition-colors ${
+                preferences.continuousListening
+                  ? 'bg-yellow-400 text-black border-yellow-400'
+                  : 'bg-neutral-900 text-neutral-500 border-neutral-800'
               }`}
             >
-              <div
-                className={`w-4 h-4 rounded-full bg-slate-950 transition-transform ${
-                  preferences.continuousListening ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
+              {preferences.continuousListening ? 'ON' : 'OFF'}
             </button>
           </div>
 
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
+          <div className="flex items-center justify-between p-2 bg-neutral-950 border border-neutral-800 text-xs">
             <div>
-              <span className="font-mono font-bold text-slate-200 block">
-                Auto-Speak Responses
+              <span className="font-mono font-bold text-neutral-200 block">
+                Auto-Speak Answers
               </span>
-              <span className="text-[11px] text-slate-400">
-                Immediately synthesize voice audio for all market answers
+              <span className="text-[10px] text-neutral-500">
+                Immediately synthesize voice output
               </span>
             </div>
             <button
@@ -183,15 +169,13 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
                   autoSpeakResponses: !preferences.autoSpeakResponses,
                 })
               }
-              className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                preferences.autoSpeakResponses ? 'bg-cyan-500' : 'bg-slate-700'
+              className={`px-3 py-1 font-mono text-xs font-bold border transition-colors ${
+                preferences.autoSpeakResponses
+                  ? 'bg-yellow-400 text-black border-yellow-400'
+                  : 'bg-neutral-900 text-neutral-500 border-neutral-800'
               }`}
             >
-              <div
-                className={`w-4 h-4 rounded-full bg-slate-950 transition-transform ${
-                  preferences.autoSpeakResponses ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
+              {preferences.autoSpeakResponses ? 'ON' : 'OFF'}
             </button>
           </div>
         </div>
@@ -200,9 +184,9 @@ export const JarvisSettingsModal: React.FC<JarvisSettingsModalProps> = ({
         <div className="pt-2 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold transition-all shadow-md shadow-cyan-500/20"
+            className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-black text-xs font-mono font-bold uppercase transition-colors"
           >
-            CONFIRM & APPLY
+            Apply
           </button>
         </div>
       </div>
