@@ -1,0 +1,10 @@
+{
+  "name": "JARVIS Trader Voice AI",
+  "description": "Continuous voice AI trading assistant delivering real-time Google Finance market sentiment, morning trader audio briefings, and personalized watchlist intelligence.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
